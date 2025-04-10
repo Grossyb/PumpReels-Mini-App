@@ -5,6 +5,30 @@ html, body {
   font-family: sans-serif;
   background-color: #111113;
   color: #fff;
+  height: 100%;
+  width: 100%;
+}
+
+/* Make the body a flex container so children can expand */
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+/* If you have a status bar or header, you can add:
+   .status-bar { flex-shrink: 0; }
+   so it doesn't shrink. Just an example if needed. */
+
+/* Main container for app content
+   - Use flex: 1 to fill remaining space
+   - Use overflow-y: auto for scrolling if content overflows */
+.app-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  box-sizing: border-box;
+  overflow-y: auto;
 }
 
 .status-left, .status-right {
@@ -21,25 +45,11 @@ html, body {
   margin-left: 4px;
 }
 
-/* Main container for app content */
-.app-container {
-  padding: 16px;
-}
-
-/* Top row: includes the back button, title, "Turbo" toggle */
+/* Top row: includes the title */
 .top-row {
   display: flex;
-  align-items: left;
+  align-items: flex-start; /* or center, if preferred */
   margin-bottom: 24px;
-}
-
-/* “X” back button */
-.back-button {
-  background: none;
-  border: none;
-  font-size: 24px;
-  color: #fff;
-  cursor: pointer;
 }
 
 /* The image card box */
