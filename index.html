@@ -96,6 +96,89 @@
 
     // Validate form on typing in the description
     descriptionInput.addEventListener('input', validateForm);
+
+
+    const generateEndpoint = "https://https://pumpreelsbot-110643805876.us-central1.run.app/generateVideo";
+    const statusEndpoint = "https://https://pumpreelsbot-110643805876.us-central1.run.app/getVideoStatus";
+
+    generateBtn.addEventListener('click', async function () {
+      // Show loading animation
+      showLoading(true);
+
+      const formData = new FormData();
+      formData.append("prompt_text", descriptionInput.value);
+      formData.append("image", imageInput.files[0]);
+
+      try {
+        // 1. Upload to generateVideo
+        const res = await fetch(generateEndpoint, {
+          method: "POST",
+          body: formData,
+        });
+
+        const data = await res.json();
+        if (!res.ok || !data.video_id) {
+          throw new Error(data.detail || "Failed to start video generation.");
+        }
+
+        const videoId = data.video_id;
+
+        // 2. Start polling
+        let attempts = 0;
+        let videoUrl = "";
+        const maxAttempts = 40;
+        const pollDelay = 3000; // ms
+
+        while (attempts < maxAttempts) {
+          const statusRes = await fetch(`${statusEndpoint}?video_id=${videoId}`);
+          const statusData = await statusRes.json();
+
+          if (statusData.status === "finished" && statusData.url) {
+            videoUrl = statusData.url;
+            break;
+          }
+
+          if (statusData.status === "failed") {
+            throw new Error("Video generation failed.");
+          }
+
+          await new Promise(resolve => setTimeout(resolve, pollDelay));
+          attempts++;
+        }
+
+        showLoading(false);
+
+        if (videoUrl) {
+          sendToTelegramBot(videoUrl);
+        } else {
+          alert("Video took too long to generate. Try again later.");
+        }
+
+      } catch (error) {
+        showLoading(false);
+        alert("Error: " + error.message);
+      }
+    });
+
+    // Show or hide loading animation (you can customize this)
+    function showLoading(show) {
+      if (show) {
+        generateBtn.innerHTML = "Generating... ⏳";
+        generateBtn.disabled = true;
+      } else {
+        generateBtn.innerHTML = `
+          <img src="sparkles.png" style="height: 1em;"> Generate
+          <img src="gem.png" style="height: 1em;">
+        `;
+        validateForm();
+      }
+    }
+
+    // 3. Send result back to Telegram using sendData
+    function sendToTelegramBot(videoUrl) {
+      Telegram.WebApp.sendData(JSON.stringify({ video_url: videoUrl }));
+      Telegram.WebApp.close();  // optional: auto-close web app
+    }
   </script>
 </body>
 </html>
