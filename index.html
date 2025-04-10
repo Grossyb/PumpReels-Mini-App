@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Animate an Image</title>
   <link rel="stylesheet" href="styles.css">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
   <main class="app-container">
@@ -51,6 +52,16 @@
   </main>
 
   <script>
+    const tg = window.Telegram.WebApp;
+    tg.ready();
+
+    // OPTIONAL: expand to full height
+    // tg.expand();
+
+    // Read start_param passed via `?startapp=create`
+    const startParam = tg.initDataUnsafe?.start_param;
+    console.log("🚀 start_param:", startParam);
+
     const imageInput = document.getElementById('imageInput');
     const descriptionInput = document.getElementById('description-input');
     const generateBtn = document.getElementById('generateBtn');
