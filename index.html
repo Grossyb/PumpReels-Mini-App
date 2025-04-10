@@ -76,6 +76,13 @@
       }
     });
 
+    descriptionInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();  // Don’t insert a newline
+        descriptionInput.blur();  // This hides the keyboard on iOS
+      }
+    });
+
     // Validate form on typing in the description
     descriptionInput.addEventListener('input', validateForm);
   </script>
