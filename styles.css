@@ -1,41 +1,58 @@
-/* 1) Make html/body fill the entire screen, and set a larger base font size */
+/* Reset some defaults */
 html, body {
   margin: 0;
   padding: 0;
+  font-family: sans-serif;
   background-color: #111113;
   color: #fff;
-  font-family: sans-serif;
-  width: 100%;
   height: 100%;
-  /* Increase base font size so everything is bigger on mobile */
-  font-size: 18px;
-  box-sizing: border-box;
+  width: 100%;
 }
 
-/* 2) Use flex layout at the body or a top-level container
-   so we can push content to the bottom. */
+/* Make the body a flex container so children can expand */
 body {
   display: flex;
   flex-direction: column;
 }
 
-/* The main app container takes up all remaining space */
+/* If you have a status bar or header, you can add:
+   .status-bar { flex-shrink: 0; }
+   so it doesn't shrink. Just an example if needed. */
+
+/* Main container for app content
+   - Use flex: 1 to fill remaining space
+   - Use overflow-y: auto for scrolling if content overflows */
 .app-container {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  flex: 1;                 /* Fill vertical space */
-  width: 100%;
-  height: 100%;
+  padding: 16px;
   box-sizing: border-box;
-  overflow: hidden;        /* or auto, if you prefer scrolling within the container */
+  overflow-y: auto;
 }
 
-/* If you have a top row or a top-content area, it can just flow normally */
-.top-content {
-  /* nothing special needed unless you want specific styling */
+.status-left, .status-right {
+  display: flex;
+  align-items: center;
 }
 
-/* The image card area in the top-content */
+.status-icon {
+  margin-left: 8px;
+  font-size: 16px;
+}
+
+.battery {
+  margin-left: 4px;
+}
+
+/* Top row: includes the title */
+.top-row {
+  display: flex;
+  align-items: flex-start; /* or center, if preferred */
+  margin-bottom: 24px;
+}
+
+/* The image card box */
 .image-card {
   background-color: #19191B;
   border-radius: 12px;
@@ -45,9 +62,9 @@ body {
   position: relative;
 }
 
-/* Make the image bigger so it doesn't look tiny on phones */
+/* The stacked image preview area */
 .image-preview {
-  width: 150px; /* was 120px, increased slightly */
+  width: 120px;
   margin: 0 auto 16px auto;
 }
 
@@ -57,67 +74,64 @@ body {
   border-radius: 8px;
 }
 
-/* "Upload your image" text, etc. */
+/* “Upload your image” / “Take a photo” text */
 .upload-text {
   margin: 8px 0;
 }
 
+/* "OR" between the two options */
 .or-text {
   display: block;
   margin: 8px 0;
   color: #888;
 }
 
-/* Motion container pinned to bottom:
-   margin-top: auto pushes it down in a column layout.
-*/
+/* The “Turbo” toggle area (just text here) */
+.toggle-group {
+  display: flex;
+  align-items: center;
+}
+
+.toggle-label {
+  font-size: 16px;
+}
+
+/* Input + button for describing the motion */
 .motion-container {
   background-color: #19191B;
   padding: 16px;
-  border-radius: 12px 12px 0 0; /* rounded top corners, flush bottom corners if you like */
-  margin-top: auto; /* This is key: it forces this container to the bottom of its parent */
+  border-radius: 12px;
 }
 
-/* Make label bigger too */
 .motion-label {
   display: block;
   margin-bottom: 8px;
-  font-size: 1rem;
 }
 
-/* The text input bigger as well */
 .motion-input {
   width: 100%;
-  padding: 14px;
+  padding: 10px;
   border-radius: 8px;
   border: 1px solid #444;
   background-color: #222;
   color: #fff;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
   box-sizing: border-box;
-  font-size: 1rem;
 }
 
-/* Generate button styling: bigger font, bigger padding */
+/* Generate button styling */
 .generate-button {
   width: 100%;
-  padding: 18px;              /* Larger padding */
+  padding: 14px;
   background-color: #927CDB;
   color: #fff;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  font-size: 1.125rem;        /* ~18px, bigger than normal text */
+  font-size: 16px;
   font-weight: bold;
 }
 
 .generate-button:hover {
   background-color: #607EF2;
-}
-
-/* Example optional app logo styling */
-.app-logo {
-  width: 150px; /* or adjust as you like */
-  display: block;
-  margin: 16px auto;
 }
