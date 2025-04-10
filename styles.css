@@ -1,4 +1,4 @@
-/* Reset some defaults */
+/* Reset some defaults and make the app fill the screen */
 html, body {
   margin: 0;
   padding: 0;
@@ -14,10 +14,6 @@ body {
   display: flex;
   flex-direction: column;
 }
-
-/* If you have a status bar or header, you can add:
-   .status-bar { flex-shrink: 0; }
-   so it doesn't shrink. Just an example if needed. */
 
 /* Main container for app content
    - Use flex: 1 to fill remaining space
@@ -45,7 +41,7 @@ body {
   margin-left: 4px;
 }
 
-/* Top row: includes the title */
+/* Top row: includes the logos */
 .top-row {
   display: flex;
   align-items: flex-start; /* or center, if preferred */
@@ -74,35 +70,20 @@ body {
   border-radius: 8px;
 }
 
-/* “Upload your image” / “Take a photo” text */
+/* “Upload your image” text */
 .upload-text {
   margin: 8px 0;
+  font-size: 1rem;
 }
 
-/* "OR" between the two options */
-.or-text {
-  display: block;
-  margin: 8px 0;
-  color: #888;
-}
-
-/* The “Turbo” toggle area (just text here) */
-.toggle-group {
-  display: flex;
-  align-items: center;
-}
-
-.toggle-label {
-  font-size: 16px;
-}
-
-/* Input + button for describing the motion */
+/* The motion container at the bottom */
 .motion-container {
   background-color: #19191B;
   padding: 16px;
   border-radius: 12px;
 }
 
+/* Label + input for describing the motion */
 .motion-label {
   display: block;
   margin-bottom: 8px;
@@ -117,9 +98,10 @@ body {
   color: #fff;
   margin-bottom: 12px;
   box-sizing: border-box;
+  font-size: 1rem;
 }
 
-/* Generate button styling */
+/* Generate button styling (with disabled state) */
 .generate-button {
   width: 100%;
   padding: 14px;
@@ -130,8 +112,17 @@ body {
   cursor: pointer;
   font-size: 16px;
   font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px; /* small space between text and icon */
+}
+.generate-button:hover {
+  background-color: #19191B;
 }
 
-.generate-button:hover {
-  background-color: #607EF2;
+/* Disabled state: lower opacity, no pointer events */
+.generate-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }

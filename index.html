@@ -2,26 +2,36 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name=viewport content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Animate an Image</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <main class="app-container">
-    <!-- Top row: back button, title, "Turbo" toggle -->
+    <!-- Top row: rocket + PumpReels text logo -->
     <div class="top-row">
-      <img src="rocket.png" alt="Gem" style="height: 3em; vertical-align: middle;">
-      <img src="pumpreels_text.png" alt="Gem" style="height: 3em; vertical-align: middle;">
+      <img src="rocket.png" alt="Rocket" style="height: 3em; vertical-align: middle;">
+      <img src="pumpreels_text.png" alt="PumpReels" style="height: 3em; vertical-align: middle;">
     </div>
 
     <!-- Image card section -->
     <div class="image-card">
-      <div class="image-preview">
-        <!-- Placeholder for your screenshot -->
-        <img src="upload_image.png"
-             alt="Preview" />
-      </div>
+      <label for="imageInput" class="upload-label">
+        <div class="image-preview">
+          <img id="previewImg" src="upload_image.png" alt="Preview" />
+        </div>
+      </label>
+
       <p class="upload-text">Upload your image</p>
+
+      <!-- Hidden file input -->
+      <input
+        id="imageInput"
+        type="file"
+        accept="image/*"
+        capture="camera"
+        style="display: none;"
+      >
     </div>
 
     <!-- Motion description + Generate button -->
@@ -33,8 +43,41 @@
         class="motion-input"
         placeholder="Pepe flying in a red rocket ship to the moon…"
       >
-      <button class="generate-button">Generate <img src="gem.png" alt="Gem" style="height: 1em; vertical-align: middle;"> 100</button>
+      <button id="generateBtn" class="generate-button" disabled>
+        <img src="sparkles.png" alt="Gem" style="height: 1em; vertical-align: middle;">
+        Generate <img src="gem.png" alt="Gem" style="height: 1em; vertical-align: middle;"> 100
+      </button>
     </div>
   </main>
+
+  <script>
+    const imageInput = document.getElementById('imageInput');
+    const motionInput = document.getElementById('motion-input');
+    const generateBtn = document.getElementById('generateBtn');
+    const previewImg = document.getElementById('previewImg');
+
+    // Validate form whenever the file or text changes
+    function validateForm() {
+      const fileSelected = imageInput.files && imageInput.files.length > 0;
+      const textEntered = motionInput.value.trim().length > 0;
+      generateBtn.disabled = !(fileSelected && textEntered);
+    }
+
+    // Show image preview and validate form on file selection
+    imageInput.addEventListener('change', function() {
+      validateForm();
+      if (imageInput.files && imageInput.files.length > 0) {
+        const file = imageInput.files[0];
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          previewImg.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // Validate form on typing in the motion description
+    motionInput.addEventListener('input', validateForm);
+  </script>
 </body>
 </html>
