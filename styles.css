@@ -76,20 +76,20 @@ body {
   font-size: 1rem;
 }
 
-/* The motion container at the bottom */
-.motion-container {
+/* The description container at the bottom */
+.description-container {
   background-color: #19191B;
   padding: 16px;
   border-radius: 12px;
 }
 
-/* Label + input for describing the motion */
-.motion-label {
+/* Label + input for describing the description */
+.description-label {
   display: block;
   margin-bottom: 8px;
 }
 
-.motion-input {
+.description-input {
   width: 100%;
   padding: 10px;
   border-radius: 8px;
