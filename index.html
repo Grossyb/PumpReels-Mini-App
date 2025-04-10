@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Animate an Image</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app-container">
+    <!-- Top row: back button, title, "Turbo" toggle -->
+    <div class="top-row">
+      <img src="rocket.png" alt="Gem" style="height: 3em; vertical-align: middle;">
+      <img src="pumpreels_text.png" alt="Gem" style="height: 3em; vertical-align: middle;">
+    </div>
+
+    <!-- Image card section -->
+    <div class="image-card">
+      <div class="image-preview">
+        <!-- Placeholder for your screenshot -->
+        <img src="upload_image.png"
+             alt="Preview" />
+      </div>
+      <p class="upload-text">Upload your image</p>
+    </div>
+
+    <!-- Motion description + Generate button -->
+    <div class="motion-container">
+      <label for="motion-input" class="motion-label">Describe the animation</label>
+      <input
+        type="text"
+        id="motion-input"
+        class="motion-input"
+        placeholder="Pepe flying in a red rocket ship to the moon…"
+      >
+      <button class="generate-button">Generate <img src="gem.png" alt="Gem" style="height: 1em; vertical-align: middle;"> 100</button>
+    </div>
+  </main>
+</body>
+</html>
