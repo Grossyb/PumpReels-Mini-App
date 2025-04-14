@@ -132,6 +132,7 @@
         while (attempts < maxAttempts) {
           const statusRes = await fetch(`${statusEndpoint}?video_id=${videoId}`);
           const statusData = await statusRes.json();
+          console.log(statusData)
 
           if (statusData.status === "finished" && statusData.url) {
             videoUrl = statusData.url;
