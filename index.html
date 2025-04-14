@@ -33,6 +33,7 @@
         class="description-input"
         placeholder="Pepe flying in a red rocket ship to the moon…"
       />
+      <p id='test' style="color: white;"></p>
       <button id="generateBtn" class="generate-button" disabled>
         <img src="sparkles.png" alt="Gem" style="height: 1em; vertical-align: middle;" />
         Generate <img src="gem.png" alt="Gem" style="height: 1em; vertical-align: middle;" />
@@ -47,12 +48,15 @@
 
     const imageInput = document.getElementById('imageInput');
     const descriptionInput = document.getElementById('description-input');
+    const test = document.getElementById('test');
     const generateBtn = document.getElementById('generateBtn');
     const previewImg = document.getElementById('previewImg');
     const statusText = document.getElementById('statusText');
 
     const generateEndpoint = "https://pumpreelsbot-110643805876.us-central1.run.app/generateVideo";
     const statusEndpoint = "https://pumpreelsbot-110643805876.us-central1.run.app/getVideoStatus";
+
+    test.innerHTML = "tg.initDataUnsafe: " + JSON.stringify(tg.initDataUnsafe, null, 2);
 
     function validateForm() {
       const fileSelected = imageInput.files && imageInput.files.length > 0;
