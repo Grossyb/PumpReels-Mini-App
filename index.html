@@ -1,40 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Animate an Image</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css" />
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
   <main class="app-container">
-    <!-- Top row: rocket + PumpReels text logo -->
     <div class="top-row">
-      <img src="rocket.png" alt="Rocket" style="height: 3em; vertical-align: middle;">
-      <img src="pumpreels_text.png" alt="PumpReels" style="height: 3em; vertical-align: middle;">
+      <img src="rocket.png" alt="Rocket" style="height: 3em; vertical-align: middle;" />
+      <img src="pumpreels_text.png" alt="PumpReels" style="height: 3em; vertical-align: middle;" />
     </div>
 
-    <!-- Image card section -->
     <div class="image-card">
       <label for="imageInput" class="upload-label">
         <div class="image-preview">
           <img id="previewImg" src="upload_image.png" alt="Preview" />
         </div>
       </label>
-
       <p class="upload-text">Upload your image</p>
-
-      <!-- Hidden file input -->
-      <input
-        id="imageInput"
-        type="file"
-        accept="image/*"
-        style="display: none;"
-      >
+      <input id="imageInput" type="file" accept="image/*" style="display: none;" />
     </div>
 
-    <!-- description + Generate button -->
     <div class="description-container">
       <label for="description-input" class="description-label">Describe the animation</label>
       <input
@@ -43,11 +32,12 @@
         enterkeyhint="done"
         class="description-input"
         placeholder="Pepe flying in a red rocket ship to the moon…"
-      >
+      />
       <button id="generateBtn" class="generate-button" disabled>
-        <img src="sparkles.png" alt="Gem" style="height: 1em; vertical-align: middle;">
-        Generate <img src="gem.png" alt="Gem" style="height: 1em; vertical-align: middle;"> 100
+        <img src="sparkles.png" alt="Gem" style="height: 1em; vertical-align: middle;" />
+        Generate <img src="gem.png" alt="Gem" style="height: 1em; vertical-align: middle;" />
       </button>
+      <p id="statusText" style="margin-top: 1em; text-align: center; font-weight: bold;"></p>
     </div>
   </main>
 
@@ -55,91 +45,74 @@
     const tg = window.Telegram.WebApp;
     tg.ready();
 
-    // OPTIONAL: expand to full height
-    // tg.expand();
-
-    // Read start_param passed via `?startapp=create`
-    const startParam = tg.initDataUnsafe?.start_param;
-    console.log("🚀 start_param:", startParam);
-
     const imageInput = document.getElementById('imageInput');
     const descriptionInput = document.getElementById('description-input');
     const generateBtn = document.getElementById('generateBtn');
     const previewImg = document.getElementById('previewImg');
+    const statusText = document.getElementById('statusText');
 
-    // Validate form whenever the file or text changes
+    const generateEndpoint = "https://pumpreelsbot-110643805876.us-central1.run.app/generateVideo";
+    const statusEndpoint = "https://pumpreelsbot-110643805876.us-central1.run.app/getVideoStatus";
+
     function validateForm() {
       const fileSelected = imageInput.files && imageInput.files.length > 0;
       const textEntered = descriptionInput.value.trim().length > 0;
       generateBtn.disabled = !(fileSelected && textEntered);
     }
 
-    // Show image preview and validate form on file selection
-    imageInput.addEventListener('change', function() {
+    imageInput.addEventListener('change', () => {
       validateForm();
       if (imageInput.files && imageInput.files.length > 0) {
         const file = imageInput.files[0];
         const reader = new FileReader();
-        reader.onload = function(e) {
-          previewImg.src = e.target.result;
-        };
+        reader.onload = e => previewImg.src = e.target.result;
         reader.readAsDataURL(file);
       }
     });
 
-    descriptionInput.addEventListener('keydown', function(e) {
+    descriptionInput.addEventListener('keydown', e => {
       if (e.key === 'Enter') {
-        e.preventDefault();  // Don’t insert a newline
-        descriptionInput.blur();  // This hides the keyboard on iOS
+        e.preventDefault();
+        descriptionInput.blur();
       }
     });
 
-    // Validate form on typing in the description
     descriptionInput.addEventListener('input', validateForm);
 
-
-    const generateEndpoint = "https://pumpreelsbot-110643805876.us-central1.run.app/generateVideo";
-    const statusEndpoint = "https://pumpreelsbot-110643805876.us-central1.run.app/getVideoStatus";
-
-    generateBtn.addEventListener('click', async function () {
-      // Show loading animation
-      showLoading(true);
-
+    generateBtn.addEventListener('click', async () => {
+      showLoading("Uploading image...");
       const formData = new FormData();
       formData.append("prompt_text", descriptionInput.value);
       formData.append("image", imageInput.files[0]);
 
       try {
-        // 1. Upload to generateVideo
         const res = await fetch(generateEndpoint, {
           method: "POST",
-          body: formData,
+          body: formData
         });
-
         const data = await res.json();
-        if (!res.ok || !data.video_id) {
-          throw new Error(data.detail || "Failed to start video generation.");
-        }
+        if (!res.ok || !data.video_id) throw new Error(data.detail || "Failed to start video generation.");
 
         const videoId = data.video_id;
-
-        // 2. Start polling
         let attempts = 0;
-        let videoUrl = "";
         const maxAttempts = 40;
-        const pollDelay = 3000; // ms
+        const pollDelay = 1000;
+        let videoUrl = "";
 
         while (attempts < maxAttempts) {
           const statusRes = await fetch(`${statusEndpoint}?video_id=${videoId}`);
           const statusData = await statusRes.json();
-          console.log(statusData)
+          console.log(statusData);
 
-          if (statusData.status === "finished" && statusData.url) {
+          if (statusData.status === "queued") {
+            showLoading("Your video is in queue...");
+          } else if (statusData.status === "started") {
+            const percent = statusData.progress ?? 0;
+            showLoading(`Rendering your video... ${percent}%`);
+          } else if (statusData.status === "finished" && statusData.url) {
             videoUrl = statusData.url;
             break;
-          }
-
-          if (statusData.status === "failed") {
+          } else if (statusData.status === "failed") {
             throw new Error("Video generation failed.");
           }
 
@@ -147,38 +120,38 @@
           attempts++;
         }
 
-        showLoading(false);
-
         if (videoUrl) {
+          console.log(videoUrl);
+          console.log("DONE!");
+          resetButton();
           sendToTelegramBot(videoUrl);
         } else {
-          alert("Video took too long to generate. Try again later.");
+          throw new Error("Video took too long to generate. Try again later.");
         }
-
       } catch (error) {
-        showLoading(false);
+        resetButton();
         alert("Error: " + error.message);
       }
     });
 
-    // Show or hide loading animation (you can customize this)
-    function showLoading(show) {
-      if (show) {
-        generateBtn.innerHTML = "Generating... ⏳";
-        generateBtn.disabled = true;
-      } else {
-        generateBtn.innerHTML = `
-          <img src="sparkles.png" style="height: 1em;"> Generate
-          <img src="gem.png" style="height: 1em;">
-        `;
-        validateForm();
-      }
+    function showLoading(message) {
+      generateBtn.innerHTML = "⏳ Generating...";
+      generateBtn.disabled = true;
+      statusText.textContent = message;
     }
 
-    // 3. Send result back to Telegram using sendData
+    function resetButton() {
+      generateBtn.innerHTML = `
+        <img src="sparkles.png" style="height: 1em;"> Generate
+        <img src="gem.png" style="height: 1em;">
+      `;
+      statusText.textContent = "";
+      validateForm();
+    }
+
     function sendToTelegramBot(videoUrl) {
       Telegram.WebApp.sendData(JSON.stringify({ video_url: videoUrl }));
-      Telegram.WebApp.close();  // optional: auto-close web app
+      Telegram.WebApp.close();
     }
   </script>
 </body>
