@@ -6,6 +6,30 @@
   <title>Animate an Image</title>
   <link rel="stylesheet" href="styles.css" />
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    .toast {
+      visibility: hidden;
+      min-width: 200px;
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      border-radius: 8px;
+      padding: 12px 16px;
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9999;
+      font-size: 14px;
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
+    }
+
+    .toast.show {
+      visibility: visible;
+      opacity: 1;
+    }
+  </style>
 </head>
 <body>
   <main class="app-container">
@@ -38,9 +62,14 @@
         <img src="sparkles.png" alt="Gem" style="height: 1em; vertical-align: middle;" />
         Generate <img src="gem.png" alt="Gem" style="height: 1em; vertical-align: middle;" />
       </button>
+      <button id="copyBtn" class="generate-button" style="display: none; margin-top: 10px;">
+        📋 Copy Link & Close
+      </button>
       <p id="statusText" style="margin-top: 1em; text-align: center; font-weight: bold;"></p>
     </div>
   </main>
+
+  <div id="toast" class="toast">Copied to clipboard!</div>
 
   <script>
     const tg = window.Telegram.WebApp;
@@ -52,6 +81,8 @@
     const generateBtn = document.getElementById('generateBtn');
     const previewImg = document.getElementById('previewImg');
     const statusText = document.getElementById('statusText');
+    const copyBtn = document.getElementById('copyBtn');
+    const toast = document.getElementById('toast');
 
     const generateEndpoint = "https://pumpreelsbot-110643805876.us-central1.run.app/generateVideo";
     const statusEndpoint = "https://pumpreelsbot-110643805876.us-central1.run.app/getVideoStatus";
@@ -125,10 +156,8 @@
         }
 
         if (videoUrl) {
-          console.log(videoUrl);
-          console.log("DONE!");
           resetButton();
-          sendToTelegramBot(videoUrl);
+          showCopyButton(videoUrl);
         } else {
           throw new Error("Video took too long to generate. Try again later.");
         }
@@ -151,11 +180,27 @@
       `;
       statusText.textContent = "";
       validateForm();
+      copyBtn.style.display = "none";
     }
 
-    function sendToTelegramBot(videoUrl) {
-      Telegram.WebApp.sendData(JSON.stringify({ video_url: videoUrl }));
-      Telegram.WebApp.close();
+    function showCopyButton(videoUrl) {
+      copyBtn.style.display = "block";
+      copyBtn.onclick = () => {
+        navigator.clipboard.writeText(videoUrl).then(() => {
+          showToast("✅ Link copied!");
+          setTimeout(() => Telegram.WebApp.close(), 1500);
+        }).catch(() => {
+          showToast("❌ Failed to copy");
+        });
+      };
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add("show");
+      setTimeout(() => {
+        toast.classList.remove("show");
+      }, 1300);
     }
   </script>
 </body>
