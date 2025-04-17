@@ -209,34 +209,17 @@
     }
 
     async function sendVideoToGroup(videoUrl) {
-
-      if (!groupId || !videoUrl) {
-        console.error("Missing groupId or videoUrl");
-        return;
-      }
-
-      try {
-        const response = await fetch(sendVideoEndpoint, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            video_url: videoUrl,
-            group_id: groupId
-          })
-        });
-
-        const result = await response.json();
-
-        if (!response.ok) {
-          throw new Error(result.detail || "Failed to send video");
-        }
-
-        console.log("Video sent successfully:", result);
-      } catch (error) {
-        console.error("Error sending video:", error);
-      }
+      const formData = new FormData();
+      formData.append("group_id", Telegram.WebApp.initDataUnsafe?.start_param);
+      formData.append("video_url", videoUrl);
+      
+      fetch("https://pumpreelsbot-110643805876.us-central1.run.app/sendVideo", {
+        method: "POST",
+        body: formData
+      })
+      .then(res => res.json())
+      .then(console.log)
+      .catch(console.error);
     }
   </script>
 </body>
