@@ -74,7 +74,7 @@
   <script>
     const tg = window.Telegram.WebApp;
     tg.ready();
-    const groupId = Telegram.WebApp.initDataUnsafe?.start_param;  // "from_-123456789"
+    const groupId = Telegram.WebApp.initDataUnsafe?.start_param;
 
     const imageInput = document.getElementById('imageInput');
     const descriptionInput = document.getElementById('description-input');
@@ -87,9 +87,10 @@
 
     const generateEndpoint = "https://pumpreelsbot-110643805876.us-central1.run.app/generateVideo";
     const statusEndpoint = "https://pumpreelsbot-110643805876.us-central1.run.app/getVideoStatus";
+    const sendVideoEndpoint = "https://pumpreelsbot-110643805876.us-central1.run.app/sendVideo";
 
-    // test.innerHTML = groupId;
-    test.innerHTML = JSON.stringify(Telegram.WebApp.initDataUnsafe, null, 2);
+    test.innerHTML = groupId;
+    // test.innerHTML = JSON.stringify(Telegram.WebApp.initDataUnsafe, null, 2);
 
     function validateForm() {
       const fileSelected = imageInput.files && imageInput.files.length > 0;
@@ -160,12 +161,8 @@
         if (videoUrl) {
           resetButton();
           showCopyButton(videoUrl);
-          const groupId = Telegram.WebApp.initDataUnsafe?.start_param;  // "from_-123456789"
+          sendVideoToGroup(videoUrl);
 
-          Telegram.WebApp.sendData(JSON.stringify({
-            video_url: videoUrl,
-            origin_group_id: groupId
-          }));
         } else {
           throw new Error("Video took too long to generate. Try again later.");
         }
@@ -209,6 +206,37 @@
       setTimeout(() => {
         toast.classList.remove("show");
       }, 1300);
+    }
+
+    async function sendVideoToGroup(videoUrl) {
+
+      if (!groupId || !videoUrl) {
+        console.error("Missing groupId or videoUrl");
+        return;
+      }
+
+      try {
+        const response = await fetch(sendVideoEndpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            video_url: videoUrl,
+            group_id: groupId
+          })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.detail || "Failed to send video");
+        }
+
+        console.log("Video sent successfully:", result);
+      } catch (error) {
+        console.error("Error sending video:", error);
+      }
     }
   </script>
 </body>
