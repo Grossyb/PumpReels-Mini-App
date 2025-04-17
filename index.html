@@ -74,6 +74,7 @@
   <script>
     const tg = window.Telegram.WebApp;
     tg.ready();
+    const groupId = Telegram.WebApp.initDataUnsafe?.start_param;  // "from_-123456789"
 
     const imageInput = document.getElementById('imageInput');
     const descriptionInput = document.getElementById('description-input');
@@ -87,7 +88,7 @@
     const generateEndpoint = "https://pumpreelsbot-110643805876.us-central1.run.app/generateVideo";
     const statusEndpoint = "https://pumpreelsbot-110643805876.us-central1.run.app/getVideoStatus";
 
-    // test.innerHTML = "tg.initDataUnsafe: " + JSON.stringify(tg.initDataUnsafe, null, 2);
+    test.innerHTML = groupId;
 
     function validateForm() {
       const fileSelected = imageInput.files && imageInput.files.length > 0;
@@ -158,7 +159,12 @@
         if (videoUrl) {
           resetButton();
           showCopyButton(videoUrl);
-          Telegram.WebApp.sendData(JSON.stringify({ video_url: videoUrl }));
+          const groupId = Telegram.WebApp.initDataUnsafe?.start_param;  // "from_-123456789"
+
+          Telegram.WebApp.sendData(JSON.stringify({
+            video_url: videoUrl,
+            origin_group_id: groupId
+          }));
         } else {
           throw new Error("Video took too long to generate. Try again later.");
         }
