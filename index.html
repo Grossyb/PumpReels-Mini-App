@@ -60,7 +60,7 @@
       <p id='test' style="color: white;"></p>
       <button id="generateBtn" class="generate-button" disabled>
         <img src="sparkles.png" alt="Gem" style="height: 1em; vertical-align: middle;" />
-        Generate <img src="gem.png" alt="Gem" style="height: 1em; vertical-align: middle;" />
+        Generate 100<img src="gem.png" alt="Gem" style="height: 1em; vertical-align: middle;" />
       </button>
       <button id="copyBtn" class="generate-button" style="display: none; margin-top: 10px;">
         📋 Copy Link & Close
@@ -158,6 +158,7 @@
         if (videoUrl) {
           resetButton();
           showCopyButton(videoUrl);
+          Telegram.WebApp.sendData(JSON.stringify({ video_url: videoUrl }));
         } else {
           throw new Error("Video took too long to generate. Try again later.");
         }
