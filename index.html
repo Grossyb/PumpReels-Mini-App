@@ -38,6 +38,9 @@
       <img src="pumpreels_text.png" alt="PumpReels" style="height: 3em; vertical-align: middle;" />
     </div>
 
+    <div id="privateView" style="display: none; text-align: center; color: red;">
+      <h3>Your group does not have enough credits.\nThe admin needs to buy more credits to continue the pump 🚀"</h3>
+    </div>
     <div id="groupView" style="display: none;">
       <div class="image-card">
         <label for="imageInput" class="upload-label">
@@ -87,6 +90,7 @@
 
     if (isGroup) {
       document.getElementById("groupView").style.display = "block";
+      getGroup(initData.start_param)
     } else {
       document.getElementById("privateView").style.display = "block";
     }
@@ -96,6 +100,7 @@
       ? user.username
       : user?.first_name;
 
+    const VIDEO_CREDITS = 100;
     const imageInput = document.getElementById('imageInput');
     const descriptionInput = document.getElementById('description-input');
     const test = document.getElementById('test');
@@ -105,17 +110,46 @@
     const copyBtn = document.getElementById('copyBtn');
     const toast = document.getElementById('toast');
 
+    const getGroupEndpoint = "https://pumpreelsbot-110643805876.us-central1.run.app/getGroup";
     const generateEndpoint = "https://pumpreelsbot-110643805876.us-central1.run.app/generateVideo";
     const statusEndpoint = "https://pumpreelsbot-110643805876.us-central1.run.app/getVideoStatus";
     const sendVideoEndpoint = "https://pumpreelsbot-110643805876.us-central1.run.app/sendVideo";
 
-    test.innerHTML = groupId;
-    test.innerHTML = JSON.stringify(Telegram.WebApp.initDataUnsafe, null, 2);
+    let hasEnoughCredits = false;
 
-    function validateForm() {
+    function setGenerateButtonState() {
       const fileSelected = imageInput.files && imageInput.files.length > 0;
       const textEntered = descriptionInput.value.trim().length > 0;
-      generateBtn.disabled = !(fileSelected && textEntered);
+      generateBtn.disabled = !(fileSelected && textEntered && hasEnoughCredits);
+    }
+
+    function getGroup(groupId) {
+      try {
+        const response = await fetch(getGroupEndpoint, {
+          method: "POST",
+          body: groupId
+        });
+
+        const group = await response.json();
+        const credits = group.credits || 0;
+
+        hasEnoughCredits = credits >= VIDEO_CREDITS;
+
+        if (!hasEnoughCredits) {
+          document.getElementById("noCreditsView").style.display = "block";
+        }
+
+        setGenerateButtonState(); // Recheck form + credits
+      } catch (error) {
+        alert("Error: " + error.message);
+      }
+    }
+
+    // test.innerHTML = groupId;
+    // test.innerHTML = JSON.stringify(Telegram.WebApp.initDataUnsafe, null, 2);
+
+    function validateForm() {
+      setGenerateButtonState();
     }
 
     imageInput.addEventListener('change', () => {
