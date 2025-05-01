@@ -38,34 +38,40 @@
       <img src="pumpreels_text.png" alt="PumpReels" style="height: 3em; vertical-align: middle;" />
     </div>
 
-    <div class="image-card">
-      <label for="imageInput" class="upload-label">
-        <div class="image-preview">
-          <img id="previewImg" src="upload_image.png" alt="Preview" />
-        </div>
-      </label>
-      <p class="upload-text">Upload your image</p>
-      <input id="imageInput" type="file" accept="image/*" style="display: none;" />
+    <div id="groupView" style="display: none;">
+      <div class="image-card">
+        <label for="imageInput" class="upload-label">
+          <div class="image-preview">
+            <img id="previewImg" src="upload_image.png" alt="Preview" />
+          </div>
+        </label>
+        <p class="upload-text">Upload your image</p>
+        <input id="imageInput" type="file" accept="image/*" style="display: none;" />
+      </div>
+
+      <div class="description-container">
+        <label for="description-input" class="description-label">Describe the animation</label>
+        <input
+          type="text"
+          id="description-input"
+          enterkeyhint="done"
+          class="description-input"
+          placeholder="Pepe flying in a red rocket ship to the moon…"
+        />
+        <p id='test' style="color: white;"></p>
+        <button id="generateBtn" class="generate-button" disabled>
+          <img src="sparkles.png" alt="Gem" style="height: 1em; vertical-align: middle;" />
+          Generate 100<img src="gem.png" alt="Gem" style="height: 1em; vertical-align: middle;" />
+        </button>
+        <button id="copyBtn" class="generate-button" style="display: none; margin-top: 10px;">
+          📋 Copy Link & Close
+        </button>
+        <p id="statusText" style="margin-top: 1em; text-align: center; font-weight: bold;"></p>
+      </div>
     </div>
 
-    <div class="description-container">
-      <label for="description-input" class="description-label">Describe the animation</label>
-      <input
-        type="text"
-        id="description-input"
-        enterkeyhint="done"
-        class="description-input"
-        placeholder="Pepe flying in a red rocket ship to the moon…"
-      />
-      <p id='test' style="color: white;"></p>
-      <button id="generateBtn" class="generate-button" disabled>
-        <img src="sparkles.png" alt="Gem" style="height: 1em; vertical-align: middle;" />
-        Generate 100<img src="gem.png" alt="Gem" style="height: 1em; vertical-align: middle;" />
-      </button>
-      <button id="copyBtn" class="generate-button" style="display: none; margin-top: 10px;">
-        📋 Copy Link & Close
-      </button>
-      <p id="statusText" style="margin-top: 1em; text-align: center; font-weight: bold;"></p>
+    <div id="privateView" style="display: none;">
+      <h2>Please use the PumpReels mini app in a group!</h2>
     </div>
   </main>
 
@@ -74,9 +80,18 @@
   <script>
     const tg = window.Telegram.WebApp;
     tg.ready();
-    const groupId = Telegram.WebApp.initDataUnsafe?.start_param;
-    const user = Telegram.WebApp.initDataUnsafe?.user;
 
+    const initData = Telegram.WebApp.initDataUnsafe || {};
+    const isGroup = initData.chat_type === 'group' ||
+                (typeof initData.start_param === 'string' && initData.start_param.startsWith('-'));
+
+    if (isGroup) {
+      document.getElementById("groupView").style.display = "block";
+    } else {
+      document.getElementById("privateView").style.display = "block";
+    }
+
+    const user = Telegram.WebApp.initDataUnsafe?.user;
     const user_identifier = user?.username?.trim()
       ? user.username
       : user?.first_name;
