@@ -120,13 +120,12 @@
     }
 
     async function getGroup(groupId) {
+      const formData = new FormData();
+      formData.append("group_id", groupId);
       try {
-        const response = await fetch(getGroupEndpoint, {
+        const res = await fetch(getGroupEndpoint, {
           method: "POST",
-          headers: {
-            "Content-Type": "text/plain"
-          },
-          body: groupId
+          body: formData
         });
 
         const group = await response.json();
