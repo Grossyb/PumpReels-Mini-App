@@ -123,8 +123,10 @@
       try {
         const response = await fetch(getGroupEndpoint, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ group_id: groupId })
+          headers: {
+            "Content-Type": "text/plain" // 👈 important!
+          },
+          body: groupId // raw string
         });
 
         const group = await response.json();
