@@ -128,7 +128,7 @@
           body: formData
         });
 
-        const group = await response.json();
+        const group = await res.json();
         const credits = group.credits || 0;
 
         hasEnoughCredits = credits >= VIDEO_CREDITS;
