@@ -84,6 +84,7 @@
     const tg = window.Telegram.WebApp;
     tg.ready();
 
+    const groupId = Telegram.WebApp.initDataUnsafe?.start_param;
     const initData = Telegram.WebApp.initDataUnsafe || {};
     const isGroup = initData.chat_type === 'group' ||
                 (typeof initData.start_param === 'string' && initData.start_param.startsWith('-'));
@@ -176,6 +177,7 @@
       const formData = new FormData();
       formData.append("prompt_text", descriptionInput.value);
       formData.append("image", imageInput.files[0]);
+      formData.append("group_id", groupId);
 
       try {
         const res = await fetch(generateEndpoint, {
@@ -183,7 +185,14 @@
           body: formData
         });
         const data = await res.json();
-        if (!res.ok || !data.video_id) throw new Error(data.detail || "Failed to start video generation.");
+        if (!res.ok) {
+          if (data.error === "insufficient_credits") {
+            alert("Your group ran out of credits! The admin needs to buy more credits to continue the pump 🚀");
+          } else {
+            alert("Video generation failed. Please try again.");
+          }
+          return;
+        }
 
         const videoId = data.video_id;
         let attempts = 0;
@@ -192,7 +201,7 @@
         let videoUrl = "";
 
         while (attempts < maxAttempts) {
-          const statusRes = await fetch(`${statusEndpoint}?video_id=${videoId}`);
+          const statusRes = await fetch(`${statusEndpoint}?video_id=${videoId}&group_id=${groupId}`);
           const statusData = await statusRes.json();
           console.log(statusData);
 
@@ -204,8 +213,8 @@
           } else if (statusData.status === "finished" && statusData.url) {
             videoUrl = statusData.url;
             break;
-          } else if (statusData.status === "failed") {
-            throw new Error("Video generation failed.");
+          } else if (statusData.status === "failed" || statusData.status === "canceled") {
+            throw new Error("Video generation failed. Credits will be refunded.");
           }
 
           await new Promise(resolve => setTimeout(resolve, pollDelay));
