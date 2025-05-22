@@ -61,7 +61,8 @@
           class="description-input"
           placeholder="Pepe flying in a red rocket ship to the moon…"
         />
-        <p id='test' style="color: white;"></p>
+        <p id='testSafe' style="color: white;"></p>
+          <p id='testUnSafe' style="color: white;"></p>
         <button id="generateBtn" class="generate-button" disabled>
           <img src="sparkles.png" alt="Gem" style="height: 1em; vertical-align: middle;" />
           Generate 100<img src="gem.png" alt="Gem" style="height: 1em; vertical-align: middle;" />
@@ -87,9 +88,6 @@
 
     const initDataUnsafe = tg.initDataUnsafe || {};
     const initData = tg.initData || '';
-    console.log(initDataUnsafe);
-    console.log('==========');
-    console.log(initData);
     const groupId = initDataUnsafe?.start_param;
     const isGroup = initDataUnsafe.chat_type === 'group' ||
                   (typeof groupId === 'string' && groupId.startsWith('-'));
@@ -102,7 +100,8 @@
     const VIDEO_CREDITS = 100;
     const imageInput = document.getElementById('imageInput');
     const descriptionInput = document.getElementById('description-input');
-    const test = document.getElementById('test');
+    const testSafe = document.getElementById('testSafe');
+    const testUnSafe = document.getElementById('testUnSafe');
     const generateBtn = document.getElementById('generateBtn');
     const previewImg = document.getElementById('previewImg');
     const statusText = document.getElementById('statusText');
@@ -115,6 +114,9 @@
     const sendVideoEndpoint = "https://pumpreelsbot-110643805876.us-central1.run.app/sendVideo";
 
     let hasEnoughCredits = false;
+
+    testSafe.innerHTML = initData;
+    testUnSafe.innerHTML = initDataUnsafe;
 
     if (isGroup) {
       document.getElementById("groupView").style.display = "block";
