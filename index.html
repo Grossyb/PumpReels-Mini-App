@@ -115,8 +115,8 @@
 
     let hasEnoughCredits = false;
 
-    testSafe.innerHTML = initData;
-    testUnSafe.innerHTML = initDataUnsafe;
+    // testSafe.innerHTML = initData;
+    // testUnSafe.innerHTML = initDataUnsafe;
 
     if (isGroup) {
       document.getElementById("groupView").style.display = "block";
@@ -131,6 +131,7 @@
       try {
         const res = await fetch(getGroupEndpoint, {
           method: "POST",
+          headers: { "X-TG-INIT-DATA": initData },
           body: formData
         });
 
@@ -188,6 +189,7 @@
       try {
         const res = await fetch(generateEndpoint, {
           method: "POST",
+          headers: { "X-TG-INIT-DATA": initData },
           body: formData
         });
 
@@ -285,6 +287,7 @@
 
       fetch(sendVideoEndpoint, {
         method: "POST",
+        headers: { "X-TG-INIT-DATA": initData },
         body: formData
       })
       .then(res => res.json())
