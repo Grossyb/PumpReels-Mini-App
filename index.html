@@ -85,12 +85,16 @@
     const tg = window.Telegram.WebApp;
     tg.ready();
 
-    const initData = tg.initDataUnsafe || {};
-    const groupId = initData?.start_param;
-    const isGroup = initData.chat_type === 'group' ||
+    const initDataUnsafe = tg.initDataUnsafe || {};
+    const initData = tg.initData || '';
+    console.log(initDataUnsafe);
+    console.log('==========');
+    console.log(initData);
+    const groupId = initDataUnsafe?.start_param;
+    const isGroup = initDataUnsafe.chat_type === 'group' ||
                   (typeof groupId === 'string' && groupId.startsWith('-'));
 
-    const user = initData?.user;
+    const user = initDataUnsafe?.user;
     const user_identifier = user?.username?.trim()
       ? user.username
       : user?.first_name;
