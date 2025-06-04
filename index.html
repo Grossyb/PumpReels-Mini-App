@@ -80,7 +80,7 @@
 
   <div id="toast" class="toast">Copied to clipboard!</div>
 
-  <script>
+  <script>.
   window.onload = async () => {
     const tg = window.Telegram.WebApp;
     tg.ready();
@@ -159,7 +159,7 @@
         if (!hasEnoughCredits) {
           document.getElementById("noCreditsView").style.display = "block";
         } else {
-          return group.groupId || "";
+          return group.group_id || "";
         }
 
         setGenerateButtonState();
