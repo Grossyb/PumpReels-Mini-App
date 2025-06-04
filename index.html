@@ -232,7 +232,7 @@
         let videoUrl = "";
 
         while (attempts < maxAttempts) {
-          const statusRes = await fetch(`${statusEndpoint}?video_id=${videoId}&group_id=${groupId}`);
+          const statusRes = await fetch(`${statusEndpoint}?video_id=${videoId}&doc_id=${doc_id}`);
           const statusData = await statusRes.json();
           console.log(statusData);
 
