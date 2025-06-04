@@ -232,7 +232,12 @@
         let videoUrl = "";
 
         while (attempts < maxAttempts) {
-          const statusRes = await fetch(`${statusEndpoint}?video_id=${videoId}&doc_id=${docId}`);
+          const statusRes = await fetch(`${statusEndpoint}?video_id=${videoId}&doc_id=${docId}`, {
+            method: "POST",
+            headers: {
+              "X-TG-INIT-DATA": initData
+            }
+          });
           const statusData = await statusRes.json();
           console.log(statusData);
 
