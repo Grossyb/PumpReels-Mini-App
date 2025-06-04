@@ -200,7 +200,7 @@
             alert("Your group ran out of credits! The admin needs to buy more credits to continue the pump 🚀");
           } else {
             resetButton();
-            alert("Error: " + error.message);
+            alert("Error: " + res.json());
             // alert("Video generation failed. Please try again.");
           }
           return;

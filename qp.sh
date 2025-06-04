@@ -1,3 +1,3 @@
-git add api/
+git add .
 git commit -m 'quick push'
 git push origin main
