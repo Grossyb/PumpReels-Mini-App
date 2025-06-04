@@ -118,7 +118,7 @@ body {
   gap: 4px; /* small space between text and icon */
 }
 .generate-button:hover {
-  background-color: #19191B;
+  background-color: #927CDB;
 }
 
 /* Disabled state: lower opacity, no pointer events */
