@@ -233,7 +233,7 @@
 
         while (attempts < maxAttempts) {
           const statusRes = await fetch(`${statusEndpoint}?video_id=${videoId}&doc_id=${docId}`, {
-            method: "POST",
+            method: "GET",
             headers: {
               "X-TG-INIT-DATA": initData
             }
