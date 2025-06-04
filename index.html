@@ -196,9 +196,12 @@
         const data = await res.json();
         if (!res.ok) {
           if (data.error === "insufficient_credits") {
+            resetButton();
             alert("Your group ran out of credits! The admin needs to buy more credits to continue the pump 🚀");
           } else {
-            alert("Video generation failed. Please try again.");
+            resetButton();
+            alert("Error: " + error.message);
+            // alert("Video generation failed. Please try again.");
           }
           return;
         }
@@ -223,7 +226,8 @@
             videoUrl = statusData.url;
             break;
           } else if (statusData.status === "failed" || statusData.status === "canceled") {
-            throw new Error("Video generation failed. Credits will be refunded.");
+            resetButton();
+            alert("Video generation failed. Credits will be refunded.");
           }
 
           await new Promise(resolve => setTimeout(resolve, pollDelay));
@@ -234,7 +238,8 @@
           sendVideoToGroup(videoUrl);
           Telegram.WebApp.close();
         } else {
-          throw new Error("Video took too long to generate. Try again later.");
+          resetButton();
+          alert"Video took too long to generate. Try again later.");
         }
       } catch (error) {
         resetButton();
