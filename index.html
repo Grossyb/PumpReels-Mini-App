@@ -74,7 +74,7 @@
     </div>
 
     <div id="privateView" style="display: none; text-align: center;">
-      <h3>Please use the PumpReels mini app in a group!</h3>
+      <h3>Please use the PumpReels mini app in a Telegram group!</h3>
     </div>
   </main>
 
@@ -120,7 +120,7 @@
         });
 
         if (!res.ok) {
-          throw new Error("Verification failed");
+          document.getElementById("privateView").style.display = "block";
         }
 
         const data = await res.json();
@@ -136,7 +136,7 @@
 
         return userIdentifier;
       } catch (error) {
-        alert("Error: " + error.message);
+        document.getElementById("privateView").style.display = "block";
         return null;
       }
     }
